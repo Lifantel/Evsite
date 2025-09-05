@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Link Portalım — Mavi/Siyah</title>
+  <meta name="description" content="Eğlenceli ve faydalı siteler için hızlı bağlantı portalı" />
+  <style>
+    :root{
+      --bg1:#05060f; /* siyaha yakın */
+      --bg2:#0b1f3a; /* koyu lacivert */
+      --bg3:#0a3d62; /* mavi */
+      --accent:#4da3ff;
+      --text:#e6eefb;
+      --muted:#9bb3d1;
+      --card:#0b1324ee; /* yarı saydam cam */
+      --chip:#0f2850;
+      --chip-text:#cfe2ff;
+      --shadow:0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; color:var(--text);
+      background: radial-gradient(1200px 800px at 20% 10%, rgba(77,163,255,.10), transparent 60%),
+                  radial-gradient(1000px 700px at 80% 90%, rgba(10,61,98,.25), transparent 60%),
+                  linear-gradient(135deg, var(--bg1), var(--bg2) 45%, var(--bg3));
+      background-attachment: fixed;
+    }
+    header{
+      padding:32px 20px 10px; text-align:center;
+    }
+    .title{font-size:clamp(28px,4vw,48px); letter-spacing:.5px; margin:0 0 6px;}
+    .subtitle{color:var(--muted); margin:0}
+
+    .wrap{max-width:1100px; margin:0 auto; padding:14px 20px 60px;}
+
+    .toolbar{
+      display:grid; gap:12px; grid-template-columns: 1fr; margin:24px 0 16px;
+    }
+    @media(min-width:720px){
+      .toolbar{grid-template-columns: 1fr 260px; align-items:center}
+    }
+
+    .search{
+      display:flex; gap:10px; align-items:center; background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.07); border-radius:14px; padding:10px 14px; box-shadow:var(--shadow);
+    }
+    .search input{flex:1; background:transparent; border:none; color:var(--text); outline:none; font-size:16px}
+    .search .kbd{font:12px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; opacity:.7; border:1px solid rgba(255,255,255,.15); padding:2px 6px; border-radius:6px}
+
+    .filters{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-start}
+    .chip{background:var(--chip); color:var(--chip-text); border:1px solid rgba(255,255,255,.08); padding:8px 12px; border-radius:999px; cursor:pointer; user-select:none; transition:.2s transform, .2s background}
+    .chip:hover{transform:translateY(-1px)}
+    .chip.active{background:linear-gradient(135deg, rgba(77,163,255,.25), rgba(77,163,255,.05)); border-color:rgba(77,163,255,.45)}
+
+    .grid{display:grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap:14px;}
+    @media(min-width:620px){.grid{grid-template-columns: repeat(2, minmax(0, 1fr));}}
+    @media(min-width:980px){.grid{grid-template-columns: repeat(3, minmax(0, 1fr));}}
+
+    .card{position:relative; background:var(--card); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:16px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:12px; backdrop-filter: blur(8px)}
+    .card h3{margin:0; font-size:20px}
+    .desc{color:var(--muted); font-size:14px; line-height:1.45}
+
+    .tags{display:flex; gap:6px; flex-wrap:wrap}
+    .tag{font-size:12px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); color:#cfe2ff}
+
+    .actions{display:flex; gap:10px; margin-top:auto}
+    .btn{
+      flex:1; text-align:center; text-decoration:none; color:white; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:linear-gradient(180deg, rgba(77,163,255,.25), rgba(77,163,255,.15));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 6px 16px rgba(0,0,0,.25);
+      transition:.15s transform, .15s box-shadow, .15s filter
+    }
+    .btn:hover{transform:translateY(-1px); box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 10px 22px rgba(0,0,0,.35)}
+    .btn.secondary{background:transparent}
+
+    footer{opacity:.75; text-align:center; font-size:12px; padding:26px 0}
+    .empty{opacity:.7; text-align:center; padding:30px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="title">Koleksiyonum</h1>
+    <p class="subtitle">Eğlenceli & faydalı bağlantılar • Mavi/Siyah tema</p>
+  </header>
+
+  <div class="wrap">
+    <div class="toolbar">
+      <div class="search" title="Ara (/)" id="searchBox">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.2-4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.6"/></svg>
+        <input id="q" placeholder="Site ara… (ör. 'müzik', 'oyun', 'harita')" autocomplete="off"/>
+        <span class="kbd">/</span>
+      </div>
+      <div class="filters" id="filters"></div>
+    </div>
+
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" style="display:none">Hiç sonuç yok. Filtreleri temizleyin ya da farklı arayın.</div>
+  </div>
+
+  <footer>Statik • GitHub Pages uyumlu • © <span id="year"></span></footer>
+
+  <script>
+    // === VERİ: İstediğin gibi düzenleyebilirsin ===
+    // Güvenli olduğundan emin olduğum bazı url'leri doldurdum. Diğerlerini kolayca ekleyebilirsin.
+    const LINKS = [
+      { title:"Little Alchemy 2", url:"https://littlealchemy2.com/", desc:"Öğeleri birleştirerek yeni şeyler keşfet.", tags:["oyun","yaratıcı"] },
+      { title:"This Is My Website Now", url:"https://thisismywebsitenow.com/", desc:"Absürt/deneysel bir tek sayfa.", tags:["absürt","deneyim"] },
+      { title:"100,000 Stars", url:"https://stars.chromeexperiments.com/", desc:"Galaksiyi interaktif keşfet.", tags:["uzay","interaktif","harita"] },
+      { title:"This Person Does Not Exist", url:"https://thispersondoesnotexist.com/", desc:"Yapay zekâ ile üretilen sahte yüzler.", tags:["ai","görsel"] },
+      { title:"Ling Your Language", url:"#", desc:"(URL ekle) Dil oyunları/deneyleri.", tags:["dil","oyun"] },
+      { title:"OCEARCH Shark Tracker", url:"https://www.ocearch.org/tracker/", desc:"Gerçek zamanlı köpekbalığı takip haritası.", tags:["harita","doğa"] },
+      { title:"JustWatch", url:"https://www.justwatch.com/", desc:"Hangi dizi/film nerede var?", tags:["film","reyon"] },
+      { title:"Superdesigner", url:"https://superdesigner.co/", desc:"Hızlı tasarım mikro-araçları koleksiyonu.", tags:["tasarım","araç"] },
+      { title:"Online Voice Changer", url:"https://voicechanger.io/", desc:"Tarayıcıda ses efekti ver.", tags:["ses","araç"] },
+      { title:"Napflix", url:"https://www.napflix.tv/", desc:"Uyku getiren sıkıcı videolar.", tags:["rahatlatıcı","video"] },
+      { title:"GIPHY", url:"https://giphy.com/", desc:"GIF arama ve paylaşma platformu.", tags:["gif","eğlence"] },
+      { title:"Earth Engine", url:"https://earthengine.google.com/", desc:"Google'ın jeo-veri ve analiz platformu.", tags:["harita","bilim"] },
+      { title:"MusicMap (ansiklopedik)", url:"https://musicmap.info/", desc:"Müzik türlerinin büyük haritası.", tags:["müzik","harita"] },
+      { title:"Do Nothing for 2 Minutes", url:"https://www.donothingfor2minutes.com/", desc:"2 dakika boyunca hiçbir şey yapma meydan okuması.", tags:["rahatlatıcı","oyun"] },
+      { title:"Pixel Thoughts", url:"https://www.pixelthoughts.co/", desc:"Bir düşünceyi gökyüzüne bırak.", tags:["rahatlatıcı","mindfulness"] }
+      // İstersen: { title:"Watch Seinfeld", url:"#", desc:"(URL ekle)", tags:["dizi","klasik"] }
+    ];
+
+    // Kategoriler/etiketler: otomatik çıkartılacak
+    const ALL_TAG = "Tümü";
+
+    // === UI oluşturma ===
+    const grid = document.getElementById('grid');
+    const filters = document.getElementById('filters');
+    const empty = document.getElementById('empty');
+    const q = document.getElementById('q');
+    const year = document.getElementById('year');
+    year.textContent = new Date().getFullYear();
+
+    function uniqueTags(data){
+      const s = new Set();
+      data.forEach(x => (x.tags||[]).forEach(t=>s.add(t)));
+      return [ALL_TAG, ...Array.from(s).sort((a,b)=>a.localeCompare(b,'tr'))];
+    }
+
+    let activeTag = ALL_TAG;
+
+    function renderFilters(){
+      filters.innerHTML = '';
+      uniqueTags(LINKS).forEach(tag=>{
+        const el = document.createElement('div');
+        el.className = 'chip' + (tag===activeTag ? ' active' : '');
+        el.textContent = tag;
+        el.onclick = () => { activeTag = tag; render(); };
+        filters.appendChild(el);
+      });
+    }
+
+    function cardTemplate(item){
+      const tags = (item.tags||[]).map(t=>`<span class="tag">#${t}</span>`).join('');
+      const disabled = !item.url || item.url === '#';
+      return `
+        <article class="card" data-title="${(item.title||'').toLowerCase()}" data-desc="${(item.desc||'').toLowerCase()}" data-tags="${(item.tags||[]).join(' ').toLowerCase()}">
+          <h3>${item.title||''}</h3>
+          <p class="desc">${item.desc||''}</p>
+          <div class="tags">${tags}</div>
+          <div class="actions">
+            <a class="btn" ${disabled? 'aria-disabled="true"' : 'target="_blank" rel="noopener"'} href="${disabled? 'javascript:void(0)' : item.url}">${disabled? 'URL ekle' : 'Ziyaret Et'}</a>
+            <button class="btn secondary" onclick="copyLink('${item.url||''}')">Kopyala</button>
+          </div>
+        </article>`;
+    }
+
+    function copyLink(url){
+      if(!url || url==="#"){ alert('Bu öğe için URL eklemedin.'); return; }
+      navigator.clipboard.writeText(url).then(()=>{
+        toast('Bağlantı kopyalandı!');
+      },()=>alert('Kopyalanamadı.'));
+    }
+
+    let toastTimer;
+    function toast(msg){
+      clearTimeout(toastTimer);
+      let t = document.getElementById('toast');
+      if(!t){
+        t = document.createElement('div');
+        t.id = 'toast';
+        t.style.position='fixed'; t.style.bottom='20px'; t.style.left='50%'; t.style.transform='translateX(-50%)';
+        t.style.background='rgba(12,27,52,.9)'; t.style.border='1px solid rgba(255,255,255,.15)'; t.style.padding='10px 14px'; t.style.borderRadius='12px'; t.style.boxShadow='var(--shadow)'; t.style.zIndex='9999';
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.opacity='1';
+      toastTimer = setTimeout(()=>{ t.style.opacity='0'; }, 1500);
+    }
+
+    function render(){
+      // filtre + arama
+      const query = (q.value||'').trim().toLowerCase();
+      const data = LINKS.filter(it=>{
+        const matchesTag = activeTag===ALL_TAG || (it.tags||[]).includes(activeTag);
+        const blob = `${(it.title||'').toLowerCase()} ${(it.desc||'').toLowerCase()} ${(it.tags||[]).join(' ').toLowerCase()}`;
+        const matchesQ = !query || blob.includes(query);
+        return matchesTag && matchesQ;
+      });
+      grid.innerHTML = data.map(cardTemplate).join('');
+      empty.style.display = data.length? 'none':'block';
+    }
+
+    // kısayol: / ile arama kutusuna odaklan
+    window.addEventListener('keydown', (e)=>{
+      if(e.key === '/' && document.activeElement !== q){ e.preventDefault(); q.focus(); }
+    });
+
+    q.addEventListener('input', render);
+
+    renderFilters();
+    render();
+  </script>
+</body>
+</html>
